@@ -46,7 +46,9 @@ const createTag = async () => {
 
         console.log('commitSinceTagData', commitSinceTagData);
 
-        const commitMessages = commitSinceTagData.commits.map(({commit}) => commit.message);
+        const commitMessages = commitSinceTagData.commits.map((item) =>
+            `${item.commit.message} [[${item.sha.slice(7)}](${item.url})] - [${item.author.login}](${item.author.html_url})`
+        );
 
         console.log('commitMessages', commitMessages);
 
