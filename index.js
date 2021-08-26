@@ -25,14 +25,23 @@ const createTag = async (githubAuthToken) => {
         }
     );
     const data = await response.json();
-    console.log('data', data);
-    const mostRecentTag = data[0].name;
+
+    let mostRecentTag = 'v0.0.0-0';
+
+    if (data && Array.isArray(data) && data[0].name) {
+        mostRecentTag = data[0].name;
+    }
+
+    console.log('mostRecentTag', mostRecentTag);
+
     const [tagVersion, tagVersionNumber] = mostRecentTag.split('-');
     const cleanTag = tagVersion.replace('v', '');
     const newTag = getNewTag(cleanTag);
     const updatedTagVersionNumber =
         cleanTag === newTag ? Number(tagVersionNumber) + 1 : 1;
     const tagName = `v${newTag}-${updatedTagVersionNumber}`;
+
+    console.log('tagName', tagName);
 
     await fetch(
         `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/releases`,
@@ -56,6 +65,8 @@ const createTag = async (githubAuthToken) => {
 
 try {
     const githubAuthToken = core.getInput('github-auth-token');
+
+    console.log('githubAuthToken', githubAuthToken);
 
     createTag(githubAuthToken);
 } catch (error) {
