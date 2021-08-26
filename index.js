@@ -40,7 +40,7 @@ const createTag = async () => {
         }
 
         const commitsSinceTagResponse = await fetch(
-            `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/tags`,
+            `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/compare/:${mostRecentTag}...:HEAD`,
             {headers}
         );
         const commitSinceTagData = await response.json();
