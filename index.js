@@ -40,17 +40,12 @@ const createTag = async () => {
         }
 
         const commitSinceTagUrl = `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/compare/${mostRecentTag}...HEAD`;
-        console.log('commitSinceTagUrl', commitSinceTagUrl);
         const commitsSinceTagResponse = await fetch(commitSinceTagUrl, {headers});
         const commitSinceTagData = await commitsSinceTagResponse.json();
 
-        console.log('commitSinceTagData', commitSinceTagData);
-
         const commitMessages = commitSinceTagData.commits.map((item) =>
-            `${item.commit.message} [[${item.sha.slice(7)}](${item.url})] - [${item.author.login}](${item.author.html_url})`
+            `${item.commit.message} [[${item.sha.slice(0, 7)}](${item.url})] - [${item.author.login}](${item.author.html_url})`
         );
-
-        console.log('commitMessages', commitMessages);
 
         const [tagVersion, tagVersionNumber] = mostRecentTag.split('-');
         const cleanTag = tagVersion.replace('v', '');
@@ -59,29 +54,25 @@ const createTag = async () => {
             cleanTag === newTag ? Number(tagVersionNumber) + 1 : 1;
         const tagName = `v${newTag}-${updatedTagVersionNumber}`;
 
-        console.log('tagName', tagName);
-
         const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 
-        console.log('owner, repo', owner, repo);
+        const body = `Released at ${new Date(Date.now()).toISOString()}\n${commitMessages.join('\n')}`;
 
-        // const createReleaseResponse = await fetch(
-        //     `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/releases`,
-        //     {
-        //         body: JSON.stringify({
-        //             owner,
-        //             repo,
-        //             tag_name: tagName,
-        //             target_commitish: branchToTag,
-        //             name: `${tagName}`,
-        //             body: `Released at ${new Date(Date.now()).toISOString()}`,
-        //         }),
-        //         method: 'POST',
-        //         headers,
-        //     }
-        // );
-
-        // console.log('createReleaseResponse', createReleaseResponse);
+        await fetch(
+            `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/releases`,
+            {
+                body: JSON.stringify({
+                    owner,
+                    repo,
+                    tag_name: tagName,
+                    target_commitish: branchToTag,
+                    name: `${tagName}`,
+                    body,
+                }),
+                method: 'POST',
+                headers,
+            }
+        );
     } catch (error) {
         console.log('error', error);
         core.setFailed(error.message);
