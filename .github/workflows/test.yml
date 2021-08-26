@@ -1,0 +1,22 @@
+name: Tag
+on:
+  workflow_dispatch:
+    inputs:
+      versionChangeType:
+        description: 'Type of version bump (major, minor, patch, none)'
+        required: true
+        default: 'none'
+  schedule:
+    # Scheduled for 12PM UTC every Tuesday and Friday (8AM EST)
+    # so that the build will be completed by 9AM EST
+    - cron: 0 12 * * 2,5
+
+jobs:
+  create-new-tag:
+    name: Create new tag with version bump
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_AUTH_TOKEN: ${{ secrets.CI_GITHUB_PERSONAL_ACCESS_TOKEN }}
+      BASE_BRANCH: 'master'
+    steps:
+      - uses: ./

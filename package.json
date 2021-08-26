@@ -1,0 +1,14 @@
+{
+  "name": "react-native-tagging-action",
+  "version": "1.0.0",
+  "description": "An action for automating react native versions",
+  "main": "index.js",
+  "repository": "git@github.com:DominicSherman/react-native-tagging-action.git",
+  "author": "Dominic Sherman <dominic.sherman98@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.5.0",
+    "@actions/github": "^5.0.0",
+    "node-fetch": "^2.6.1"
+  }
+}
