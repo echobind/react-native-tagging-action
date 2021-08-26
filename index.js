@@ -26,15 +26,11 @@ const createTag = async (githubAuthToken) => {
     );
     const data = await response.json();
 
-    console.log('data', data);
-
     let mostRecentTag = 'v0.0.1-0';
 
-    if (data && Array.isArray(data) && data[0].name) {
+    if (data && Array.isArray(data) && data[0] && data[0].name) {
         mostRecentTag = data[0].name;
     }
-
-    console.log('mostRecentTag', mostRecentTag);
 
     const [tagVersion, tagVersionNumber] = mostRecentTag.split('-');
     const cleanTag = tagVersion.replace('v', '');
@@ -68,9 +64,8 @@ const createTag = async (githubAuthToken) => {
 try {
     const githubAuthToken = core.getInput('github-auth-token');
 
-    console.log('githubAuthToken', githubAuthToken);
-
     createTag(githubAuthToken);
 } catch (error) {
+    console.log('error', error);
     core.setFailed(error.message);
 }
