@@ -15,11 +15,10 @@ jobs:
   create-new-tag:
     name: Create new tag with version bump
     runs-on: ubuntu-latest
-    env:
-      BASE_BRANCH: 'master'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - uses: ./
         with:
           github-auth-token: ${{ secrets.AUTH_TOKEN_GITHUB }}
+          branch-to-tag: 'master'
