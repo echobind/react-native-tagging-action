@@ -43,7 +43,7 @@ const createTag = async () => {
             `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/compare/:${mostRecentTag}...:HEAD`,
             {headers}
         );
-        const commitSinceTagData = await response.json();
+        const commitSinceTagData = await commitsSinceTagResponse.json();
 
         console.log('commitSinceTagData', commitSinceTagData);
 
