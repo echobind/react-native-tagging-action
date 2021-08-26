@@ -44,7 +44,7 @@ const createTag = async () => {
         const commitSinceTagData = await commitsSinceTagResponse.json();
 
         const commitMessages = commitSinceTagData.commits.map((item) =>
-            `${item.commit.message} [[${item.sha.slice(0, 7)}](${item.url})] - [${item.author.login}](${item.author.html_url})`
+            `${item.commit.message} ([${item.sha.slice(0, 7)}](${item.url})) - @${item.author.login}`
         );
 
         const [tagVersion, tagVersionNumber] = mostRecentTag.split('-');
@@ -56,7 +56,7 @@ const createTag = async () => {
 
         const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 
-        const body = `Released at ${new Date(Date.now()).toISOString()}\n${commitMessages.join('\n')}`;
+        const body = `${commitMessages.join('\n* ')}`;
 
         await fetch(
             `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/releases`,
