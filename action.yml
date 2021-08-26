@@ -1,10 +1,9 @@
 name: 'React-Native tagging'
 description: 'An action for automating react native versions'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  github-auth-token:  # id of input
+    description: 'Auth token for user that will be publishing release'
     required: true
-    default: 'World'
 outputs:
   time: # id of output
     description: 'The time we greeted you'

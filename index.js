@@ -13,13 +13,13 @@ const getNewTag = tag => {
     return tag;
 };
 
-const createTag = async () => {
+const createTag = async (githubAuthToken) => {
     const response = await fetch(
         `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/tags`,
         {
             headers: {
                 Accept: 'application/vnd.github.v3+json',
-                Authorization: `Bearer ${process.env.GITHUB_AUTH_TOKEN}`,
+                Authorization: `Bearer ${githubAuthToken}`,
             },
         }
     );
@@ -47,14 +47,16 @@ const createTag = async () => {
             method: 'POST',
             headers: {
                 Accept: 'application/vnd.github.v3+json',
-                Authorization: `Bearer ${process.env.GITHUB_AUTH_TOKEN}`,
+                Authorization: `Bearer ${githubAuthToken}`,
             },
         }
     );
 };
 
 try {
-    createTag();
+    const githubAuthToken = core.getInput('github-auth-token');
+
+    createTag(githubAuthToken);
 } catch (error) {
     core.setFailed(error.message);
 }
