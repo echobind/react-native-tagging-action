@@ -19,4 +19,6 @@ jobs:
       GITHUB_AUTH_TOKEN: ${{ secrets.CI_GITHUB_PERSONAL_ACCESS_TOKEN }}
       BASE_BRANCH: 'master'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - uses: ./
