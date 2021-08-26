@@ -44,7 +44,7 @@ const createTag = async () => {
         const commitsSinceTagResponse = await fetch(commitSinceTagUrl, {headers});
         const commitSinceTagData = await commitsSinceTagResponse.json();
 
-        console.log('commitSinceTagData', commitSinceTagData);
+        console.log('commitSinceTagData', JSON.stringify(commitSinceTagData));
 
         const [tagVersion, tagVersionNumber] = mostRecentTag.split('-');
         const cleanTag = tagVersion.replace('v', '');
