@@ -8,6 +8,10 @@ inputs:
     description: 'Name of branch to create the tag off of'
     required: true
     default: 'main'
+  version-change-type:
+    description: 'Type of version bump (major, minor, patch, none)'
+    required: true
+    default: 'none'
 outputs:
   time: # id of output
     description: 'The time we greeted you'

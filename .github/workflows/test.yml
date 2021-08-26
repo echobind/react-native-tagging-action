@@ -22,3 +22,4 @@ jobs:
         with:
           github-auth-token: ${{ secrets.AUTH_TOKEN_GITHUB }}
           branch-to-tag: 'master'
+          version-change-type: ${{ github.event.inputs.versionChangeType }}
