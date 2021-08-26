@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const core = require('@actions/core');
 
 const getNewTag = tag => {
     const [major, minor, patch] = tag.split('.');
