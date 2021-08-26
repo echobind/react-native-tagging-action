@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+const fetch = require('node-fetch');
 
 const getNewTag = tag => {
     const [major, minor, patch] = tag.split('.');
@@ -24,6 +24,7 @@ const createTag = async () => {
         }
     );
     const data = await response.json();
+    console.log('data', data);
     const mostRecentTag = data[0].name;
     const [tagVersion, tagVersionNumber] = mostRecentTag.split('-');
     const cleanTag = tagVersion.replace('v', '');
