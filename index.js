@@ -21,15 +21,15 @@ const createTag = async () => {
     const githubAuthToken = core.getInput('github-auth-token');
     const branchToTag = core.getInput('branch-to-tag');
 
+    const headers = {
+        Accept: 'application/vnd.github.v3+json',
+        Authorization: `Bearer ${githubAuthToken}`,
+    };
+
     try {
         const response = await fetch(
             `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/tags`,
-            {
-                headers: {
-                    Accept: 'application/vnd.github.v3+json',
-                    Authorization: `Bearer ${githubAuthToken}`,
-                },
-            }
+            {headers}
         );
         const data = await response.json();
 
@@ -38,6 +38,14 @@ const createTag = async () => {
         if (data && Array.isArray(data) && data[0] && data[0].name) {
             mostRecentTag = data[0].name;
         }
+
+        const commitsSinceTagResponse = await fetch(
+            `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/tags`,
+            {headers}
+        );
+        const commitSinceTagData = await response.json();
+
+        console.log('commitSinceTagData', commitSinceTagData);
 
         const [tagVersion, tagVersionNumber] = mostRecentTag.split('-');
         const cleanTag = tagVersion.replace('v', '');
@@ -52,26 +60,23 @@ const createTag = async () => {
 
         console.log('owner, repo', owner, repo);
 
-        const createReleaseResponse = await fetch(
-            `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/releases`,
-            {
-                body: JSON.stringify({
-                    owner,
-                    repo,
-                    tag_name: tagName,
-                    target_commitish: branchToTag,
-                    name: `${tagName}`,
-                    body: `Released at ${new Date(Date.now()).toISOString()}`,
-                }),
-                method: 'POST',
-                headers: {
-                    Accept: 'application/vnd.github.v3+json',
-                    Authorization: `Bearer ${githubAuthToken}`,
-                },
-            }
-        );
+        // const createReleaseResponse = await fetch(
+        //     `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/releases`,
+        //     {
+        //         body: JSON.stringify({
+        //             owner,
+        //             repo,
+        //             tag_name: tagName,
+        //             target_commitish: branchToTag,
+        //             name: `${tagName}`,
+        //             body: `Released at ${new Date(Date.now()).toISOString()}`,
+        //         }),
+        //         method: 'POST',
+        //         headers,
+        //     }
+        // );
 
-        console.log('createReleaseResponse', createReleaseResponse);
+        // console.log('createReleaseResponse', createReleaseResponse);
     } catch (error) {
         console.log('error', error);
         core.setFailed(error.message);
