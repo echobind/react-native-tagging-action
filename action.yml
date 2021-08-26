@@ -4,6 +4,10 @@ inputs:
   github-auth-token:  # id of input
     description: 'Auth token for user that will be publishing release'
     required: true
+  branch-to-tag:
+    description: 'Name of branch to create the tag off of'
+    required: true
+    default: 'main'
 outputs:
   time: # id of output
     description: 'The time we greeted you'

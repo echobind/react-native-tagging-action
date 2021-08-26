@@ -14,7 +14,7 @@ const getNewTag = tag => {
     return tag;
 };
 
-const createTag = async (githubAuthToken) => {
+const createTag = async (githubAuthToken, branchToTag) => {
     const response = await fetch(
         `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/tags`,
         {
@@ -41,14 +41,18 @@ const createTag = async (githubAuthToken) => {
 
     console.log('tagName', tagName);
 
-    await fetch(
+    const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+
+    console.log('owner, repo', owner, repo);
+
+    const createReleaseResponse = await fetch(
         `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/releases`,
         {
             body: JSON.stringify({
-                owner: 'cardstack',
-                repo: 'cardwallet',
+                owner,
+                repo,
                 tag_name: tagName,
-                target_commitish: process.env.BRANCH_TO_TAG,
+                target_commitish: branchToTag,
                 name: `${tagName}`,
                 body: `Released at ${new Date(Date.now()).toISOString()}`,
             }),
@@ -59,12 +63,15 @@ const createTag = async (githubAuthToken) => {
             },
         }
     );
+
+    console.log('createReleaseResponse', createReleaseResponse);
 };
 
 try {
     const githubAuthToken = core.getInput('github-auth-token');
+    const branchToTag = core.getInput('branch-to-tag');
 
-    createTag(githubAuthToken);
+    await createTag(githubAuthToken, branchToTag);
 } catch (error) {
     console.log('error', error);
     core.setFailed(error.message);
