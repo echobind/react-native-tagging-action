@@ -26,7 +26,9 @@ const createTag = async (githubAuthToken) => {
     );
     const data = await response.json();
 
-    let mostRecentTag = 'v0.0.0-0';
+    console.log('data', data);
+
+    let mostRecentTag = 'v0.0.1-0';
 
     if (data && Array.isArray(data) && data[0].name) {
         mostRecentTag = data[0].name;
