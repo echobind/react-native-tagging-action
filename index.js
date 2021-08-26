@@ -2,19 +2,25 @@ const fetch = require('node-fetch');
 const core = require('@actions/core');
 
 const getNewTag = tag => {
+    const versionChangeType = core.getInput('version-change-type');
+
     const [major, minor, patch] = tag.split('.');
-    if (process.env.VERSION_CHANGE_TYPE === 'major') {
+
+    if (versionChangeType === 'major') {
         return `${Number(major) + 1}.0.0`;
-    } else if (process.env.VERSION_CHANGE_TYPE === 'minor') {
+    } else if (versionChangeType === 'minor') {
         return `${major}.${Number(minor) + 1}.0`;
-    } else if (process.env.VERSION_CHANGE_TYPE === 'patch') {
+    } else if (versionChangeType === 'patch') {
         return `${major}.${minor}.${Number(patch) + 1}`;
     }
 
     return tag;
 };
 
-const createTag = async (githubAuthToken, branchToTag) => {
+const createTag = async () => {
+    const githubAuthToken = core.getInput('github-auth-token');
+    const branchToTag = core.getInput('branch-to-tag');
+
     try {
         const response = await fetch(
             `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/tags`,
@@ -72,7 +78,4 @@ const createTag = async (githubAuthToken, branchToTag) => {
     }
 };
 
-const githubAuthToken = core.getInput('github-auth-token');
-const branchToTag = core.getInput('branch-to-tag');
-
-createTag(githubAuthToken, branchToTag);
+createTag();
