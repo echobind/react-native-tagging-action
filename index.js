@@ -15,64 +15,64 @@ const getNewTag = tag => {
 };
 
 const createTag = async (githubAuthToken, branchToTag) => {
-    const response = await fetch(
-        `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/tags`,
-        {
-            headers: {
-                Accept: 'application/vnd.github.v3+json',
-                Authorization: `Bearer ${githubAuthToken}`,
-            },
+    try {
+        const response = await fetch(
+            `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/tags`,
+            {
+                headers: {
+                    Accept: 'application/vnd.github.v3+json',
+                    Authorization: `Bearer ${githubAuthToken}`,
+                },
+            }
+        );
+        const data = await response.json();
+
+        let mostRecentTag = 'v0.0.1-0';
+
+        if (data && Array.isArray(data) && data[0] && data[0].name) {
+            mostRecentTag = data[0].name;
         }
-    );
-    const data = await response.json();
 
-    let mostRecentTag = 'v0.0.1-0';
+        const [tagVersion, tagVersionNumber] = mostRecentTag.split('-');
+        const cleanTag = tagVersion.replace('v', '');
+        const newTag = getNewTag(cleanTag);
+        const updatedTagVersionNumber =
+            cleanTag === newTag ? Number(tagVersionNumber) + 1 : 1;
+        const tagName = `v${newTag}-${updatedTagVersionNumber}`;
 
-    if (data && Array.isArray(data) && data[0] && data[0].name) {
-        mostRecentTag = data[0].name;
+        console.log('tagName', tagName);
+
+        const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+
+        console.log('owner, repo', owner, repo);
+
+        const createReleaseResponse = await fetch(
+            `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/releases`,
+            {
+                body: JSON.stringify({
+                    owner,
+                    repo,
+                    tag_name: tagName,
+                    target_commitish: branchToTag,
+                    name: `${tagName}`,
+                    body: `Released at ${new Date(Date.now()).toISOString()}`,
+                }),
+                method: 'POST',
+                headers: {
+                    Accept: 'application/vnd.github.v3+json',
+                    Authorization: `Bearer ${githubAuthToken}`,
+                },
+            }
+        );
+
+        console.log('createReleaseResponse', createReleaseResponse);
+    } catch (error) {
+        console.log('error', error);
+        core.setFailed(error.message);
     }
-
-    const [tagVersion, tagVersionNumber] = mostRecentTag.split('-');
-    const cleanTag = tagVersion.replace('v', '');
-    const newTag = getNewTag(cleanTag);
-    const updatedTagVersionNumber =
-        cleanTag === newTag ? Number(tagVersionNumber) + 1 : 1;
-    const tagName = `v${newTag}-${updatedTagVersionNumber}`;
-
-    console.log('tagName', tagName);
-
-    const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-
-    console.log('owner, repo', owner, repo);
-
-    const createReleaseResponse = await fetch(
-        `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/releases`,
-        {
-            body: JSON.stringify({
-                owner,
-                repo,
-                tag_name: tagName,
-                target_commitish: branchToTag,
-                name: `${tagName}`,
-                body: `Released at ${new Date(Date.now()).toISOString()}`,
-            }),
-            method: 'POST',
-            headers: {
-                Accept: 'application/vnd.github.v3+json',
-                Authorization: `Bearer ${githubAuthToken}`,
-            },
-        }
-    );
-
-    console.log('createReleaseResponse', createReleaseResponse);
 };
 
-try {
-    const githubAuthToken = core.getInput('github-auth-token');
-    const branchToTag = core.getInput('branch-to-tag');
+const githubAuthToken = core.getInput('github-auth-token');
+const branchToTag = core.getInput('branch-to-tag');
 
-    await createTag(githubAuthToken, branchToTag);
-} catch (error) {
-    console.log('error', error);
-    core.setFailed(error.message);
-}
+createTag(githubAuthToken, branchToTag);
