@@ -44,7 +44,7 @@ const createTag = async () => {
         const commitSinceTagData = await commitsSinceTagResponse.json();
 
         const commitMessages = commitSinceTagData.commits.map((item) =>
-            `${item.commit.message} ([${item.sha.slice(0, 7)}](${item.url})) - @${item.author.login}`
+            `${item.commit.message} ${item.html_url} - @${item.author.login}`
         );
 
         const [tagVersion, tagVersionNumber] = mostRecentTag.split('-');
