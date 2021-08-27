@@ -3,6 +3,9 @@
 This action automates the GitHub version tagging and releasing process for mobile applications.
 
 Versions tagged by this action will be of the form `v1.0.0-1`. For more details on this, read about the [Tagging Process](#tagging-process).
+
+For a more complete description of how this action could be utilized within a mobile release process, read [this blog post](https://blog.echobind.com/automated-react-native-release-tagging-using-github-actions-d30d9ee52c05).
+
 ## Usage
 
 ```yaml
