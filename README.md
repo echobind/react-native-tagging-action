@@ -37,4 +37,8 @@ This also allows for scheduled tagging/releasing of your app internally with no 
 
 ## Releasing
 
-In addition to creating a tag off of the HEAD of the specified branch, a release will also be created in GitHub for the given tag. The title of this release will be of the form `Release ${versionNumber}`, and the body will include a list of all commits to the branch since the previous tag. Commits will be listed in the form `${commitMessage} ${sha} - ${author}`. 
+In addition to creating a tag off of the HEAD of the specified branch, a release will also be created in GitHub for the given tag. 
+
+The title of this release will be of the form `Release ${versionNumber}`, and the body will include a list of all commits to the branch since the previous tag. 
+
+Commits will be listed in the form `${commitMessage} ${sha} - ${author}`. 
